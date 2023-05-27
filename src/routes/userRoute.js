@@ -1,8 +1,10 @@
 import express from 'express';
-import { signup } from '../controllers/userController.js';
+import { getAllUsers, getUser } from '../controllers/userController.js';
+import { auth } from '../middleware/headerValidation.js';
 
 const router = express.Router();
 
-router.post('/signup', signup);
+router.get('/get-user', auth, getUser);
+router.get('/get-all-users', auth, getAllUsers);
 
 export default router;

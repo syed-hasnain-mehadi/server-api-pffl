@@ -1,29 +1,42 @@
 import chalk from 'chalk';
 import userModel from '../models/userModel.js';
-import { registrationMail } from '../services/email.js';
-import { hashPassword } from '../services/hash.js';
-import { signJWT } from '../services/jwt.js';
 
-export const signup = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
-    let payload = req.body;
-    const hashPass = await hashPassword(payload.password);
-    payload = { ...payload, password: hashPass };
-    const user = await userModel.create(payload);
-    const token = await signJWT({ id: user?._id });
-    await registrationMail({
-      email: user?.email,
-      name: user?.username,
-      url: token // add verification url
-    });
+    const id = req.token;
+    const user = await userModel.findOne({ _id: id });
     res.status(200).send({
       success: true,
-      msg: 'User successfully register, check email to verify',
-      data: {}
+      msg: 'success',
+      data: user
     });
   } catch (error) {
     console.log(chalk.bgRed.bold(error?.message));
+    res.status(500).send({
+      success: false,
+      msg: error?.message,
+      data: {}
+    });
+  }
+};
+export const getAllUsers = async (req, res) => {
+  try {
+    const page = req.query?.page ?? 1;
+    const limit = req.query?.limit ?? 10;
+
+    const users = await userModel
+      .find({})
+      .limit(limit)
+      .skip((page - 1) * limit);
+    const count = await userModel.countDocuments({});
     res.status(200).send({
+      success: true,
+      msg: 'success',
+      data: { users, count }
+    });
+  } catch (error) {
+    console.log(chalk.bgRed.bold(error?.message));
+    res.status(500).send({
       success: false,
       msg: error?.message,
       data: {}

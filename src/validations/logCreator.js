@@ -8,8 +8,8 @@ export const logCreator = (message) => {
 
   const path = __dirname.replace('src/validations', 'public/logs/') + 'app-errors-log.txt';
   const timestamp = new Date().toISOString();
-  const logEntry = `${timestamp} - ${message}\n`;
-
+  const logEntry = `${timestamp} - ${message}\n\n\n`;
+  console.log('path', path);
   try {
     fs.appendFile(path, logEntry, (err) => {
       if (err) {

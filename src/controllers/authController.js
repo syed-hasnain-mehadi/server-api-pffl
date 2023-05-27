@@ -73,7 +73,10 @@ export const login = async (req, res) => {
         .send({ success: false, msg: 'Email id or password is not valid' });
     }
     if (!user?.[0]?.is_active) {
-      return res.status(403).send({ success: false, msg: 'Your account is not activated' });
+      return res.status(403).send({
+        success: false,
+        msg: 'Your account is not activated,  please check your mail to verify'
+      });
     }
     const isValid = await verifyPassword(payload?.password, user?.[0].password);
     if (isValid) {
@@ -94,7 +97,7 @@ export const forgetPassword = async (req, res) => {
     if (user.length > 0) {
       const token = await signJWT({ id: user?.[0]?._id }, '1h');
       await forgetPassEmail({
-        username: user?.username,
+        name: user?.username,
         email,
         url: `${process.env.SERVER_URL}/api/auth/reset-password?token=${token}` // verification url
       });

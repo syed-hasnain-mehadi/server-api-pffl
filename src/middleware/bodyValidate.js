@@ -9,7 +9,7 @@ export const signupValidate = (req, res, next) => {
   if (!email || !password || !username) {
     return res.status(406).send({
       success: false,
-      msg: 'email, password and username are required'
+      msg: 'username,email and password and  are required'
     });
   }
   const isEmailValid = emailValidation(email);
